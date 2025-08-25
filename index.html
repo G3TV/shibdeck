@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live SHIB Price</title>
+  <!-- Import Poppins from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+body {
+  background-color: #000000;
+  color: white;
+  font-family: 'Poppins', Arial, sans-serif;
+  display: block;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+#main {
+  /* Header ~65px tall, footer 48px */
+  min-height: calc(100vh - 65px - 48px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 65px; /* avoid overlap with fixed header */
+  padding-bottom: 48px; /* avoid overlap with footer */
+  gap: 15px;
+}
+
+#main.expanded {
+  justify-content: flex-start;
+}
+
+/* Remove large top margins when centered */
+#main #price { margin-top: 0; }
+#main #shib-logo { margin-top: 0; }
+
+#footer-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48px;
+  background: #000;
+  z-index: 0;
+}
+
+#gradient
+{
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(120deg, #00172D, #003C71, #005EA6, #00A3E0, #7FDBFF);
+  background-size: 300% 300%;
+  animation: gradientShift 18s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+    #price {
+      font-size: 8rem;
+      font-weight: 700;
+      transition: color 0.8s ease;
+	  margin-top: 180px;
+    }
+
+    #stats {
+      margin-top: 15px;
+    background: rgba(0,0,0,0.5);
+      padding: 10px 20px;
+      width: 710px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      font-size: 1.1rem;
+	  
+    }
+	
+	#price-container {
+  display: flex;
+  align-items: center; /* vertical align */
+  gap: 15px; /* space between logo and price */
+}
+
+#shib-logo {
+  width: 100px; /* adjust size */
+  height: 100px; /* keep square */
+  margin-top: 180px;
+  margin-left: -25px;
+  margin-right: 25px;
+}
+
+    .stat-item {
+      flex: 1 1 30%;
+      margin: 5px 0;
+    }
+
+    /* Dropdown trade container */
+    #trade-dropdown {
+      margin-top: 20px;
+    background: rgba(0,0,0,0.5);
+      padding: 15px 25px;
+      width: 700px;
+      font-size: 1.1rem;
+	  
+    }
+
+    #trade-top {
+      display: block;
+      font-family: 'Poppins', sans-serif;
+	  background: transparent;
+      padding: 5px 0;
+
+      cursor: pointer;
+    }
+
+    #trade-list {
+      display: none;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .trade-item {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 0.8fr 1fr;
+      column-gap: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .trade-headers {
+      display: none; /* shown when dropdown opens */
+      grid-template-columns: 1.2fr 1fr 1fr 0.8fr 1fr;
+      column-gap: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      color: #ddd;
+    }
+
+    /* Top trade header + row to match columns */
+    #trade-top { position: relative; padding-right: 24px; }
+    #trade-toggle { position: absolute; right: 0; top: 12px; }
+    .trade-headers--top {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 0.8fr 1fr;
+      column-gap: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 4px 0 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      color: #ddd;
+      width: 100%;
+    }
+    .trade-item--top {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 0.8fr 1fr;
+      column-gap: 10px;
+      padding: 6px 0;
+      width: 100%;
+    }
+
+    .maker { color: #007eff; font-weight: 600; }
+    .taker { color: #ff8d00; font-weight: 600; }
+
+#powered {
+  position: static;
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+}
+
+#donate {
+  position: static;
+  font-size: 0.8rem;
+  color: #fff;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#burn-donate {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: #fff;
+  text-align: center;
+}
+
+#footer-content {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 0 15px;
+  z-index: 2;
+}
+
+#burn-donate { justify-self: center; }
+
+
+
+  #copyBtn, #copyBurnBtn {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    background: #555;
+    color: #fff;
+  }
+
+  #copyBtn:hover, #copyBurnBtn:hover {
+    background: #777;
+  }
+
+	#wallet {
+	 color: white;
+	}
+	
+#comingSoonHeader {
+    width: 100%;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    background: #222;
+    padding: 10px 0; /* reduces height */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    line-height: 45px; /* ensures text vertically centers */
+}
+
+#brand {
+  position: absolute;
+  left: 35px;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+	
+  </style>
+  <header id="comingSoonHeader">
+  <span id="brand">SHIBDeck</span>
+  More Coming Soon
+</header>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+</head>
+<body>
+    <div id="gradient"></div>
+  <div id="main">
+    <div id="price-container">
+      <img id="shib-logo" src="https://i.ibb.co/svZ5NXzT/shib-logo.png" alt="SHIB Logo">
+      <div id="price">Loading...</div>
+    </div>
+
+    <div id="stats">Loading 24h stats...</div>
+
+    <!-- Trade Dropdown -->
+    <div id="trade-dropdown">
+    <div id="trade-top">
+      <div class="trade-headers--top">
+        <span>Qty.</span>
+        <span>Price</span>
+        <span>Total Cost</span>
+        <span>Market M/T</span>
+        <span>Date</span>
+      </div>
+      <div class="trade-item--top" id="top-trade-row">Loading trades...</div>
+      <span id="trade-toggle" style="cursor:pointer;">▼</span>
+    </div>
+    <div class="trade-headers" id="trade-headers">
+      <span>Qty.</span>
+      <span>Price</span>
+      <span>Total Cost</span>
+      <span>Market M/T</span>
+      <span>Date</span>
+    </div>
+    <div id="trade-list"></div>
+    </div>
+  </div>
+
+  <div id="footer-content">
+    <div id="donate">
+      Donate $SHIB if you can! wallet:
+      <span id="wallet">0xa9eac0b73f97961f16c8e5dd46ae3812b46a456c</span>
+      <button id="copyBtn">Copy</button>
+    </div>
+    <div id="burn-donate">
+      $SHIB Burn wallet:
+      <span id="burnWallet">0xdead000000000000000042069420694206942069</span>
+      <button id="copyBurnBtn">Copy</button>
+    </div>
+    <div id="powered">Powered by Binance WebSocket</div>
+  </div>
+<div id="footer-bar"></div>
+
+<script>
+  const priceEl = document.getElementById("price");
+  const statsEl = document.getElementById("stats");
+  const tradeTop = document.getElementById("trade-top");
+  const tradeList = document.getElementById("trade-list");
+  let lastPrice = null;
+  const trades = [];
+  let dropdownOpen = false;
+
+  let lastVolume = null;
+  let lastQuoteVolume = null;
+
+  // Toggle dropdown
+  tradeTop.addEventListener("click", () => {
+    dropdownOpen = !dropdownOpen;
+    tradeList.style.display = dropdownOpen ? "block" : "none";
+    document.getElementById("trade-headers").style.display = dropdownOpen ? "grid" : "none";
+    tradeTop.querySelector("#trade-toggle").textContent = dropdownOpen ? "▲" : "▼";
+    const main = document.getElementById('main');
+    if (main) {
+      if (dropdownOpen) main.classList.add('expanded');
+      else main.classList.remove('expanded');
+    }
+  });
+
+  // WebSocket for trades
+  const tradeWs = new WebSocket("wss://stream.binance.com:9443/ws/shibusdt@trade");
+
+  tradeWs.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    const price = parseFloat(data.p);
+    const qty = parseFloat(data.q);
+    const timestamp = new Date(data.T);
+    const side = data.m ? "Maker" : "Taker";
+
+    // Skip duplicates
+    if (trades.some(t => t.formattedPrice === price.toFixed(8) && t.timeMs === data.T)) return;
+
+    const formattedPrice = price.toFixed(8);
+    const formattedQty = qty.toLocaleString('en-US');
+    const tradeValue = (price * qty).toLocaleString('en-US', {style:'currency', currency:'USD', maximumFractionDigits:2});
+    const timeStr = timestamp.toLocaleTimeString();
+
+    // Color flash for price
+    if (lastPrice !== null) {
+      if (price > lastPrice) priceEl.style.color = "lime";
+      else if (price < lastPrice) priceEl.style.color = "red";
+      setTimeout(() => priceEl.style.color = "white", 400);
+    }
+    priceEl.textContent = `$${formattedPrice}`;
+    lastPrice = price;
+
+    const trade = {formattedQty, formattedPrice, tradeValue, side, timeStr, timeMs: data.T};
+    trades.unshift(trade);
+    if (trades.length > 25) trades.pop();
+
+    // Top trade bar (latest trade)
+    const topTrade = trades[0];
+    const topRow = document.getElementById('top-trade-row');
+    if (topRow) {
+      topRow.innerHTML = `
+        <span>${topTrade.formattedQty}</span>
+        <span>$${topTrade.formattedPrice}</span>
+        <span>${topTrade.tradeValue}</span>
+        <span class="${topTrade.side.toLowerCase()}">${topTrade.side}</span>
+        <span>${topTrade.timeStr}</span>
+      `;
+    }
+
+    // Dropdown list (remaining trades)
+    tradeList.innerHTML = trades.slice(1).map(t => `
+      <div class="trade-item">
+        <span>${t.formattedQty}</span>
+        <span>$${t.formattedPrice}</span>
+        <span>${t.tradeValue}</span>
+        <span class="${t.side.toLowerCase()}">${t.side}</span>
+        <span>${t.timeStr}</span>
+      </div>
+    `).join('');
+  };
+
+  tradeWs.onerror = (err) => console.error("Trade WebSocket error:", err);
+  tradeWs.onclose = () => setTimeout(() => location.reload(), 5000);
+
+  // WebSocket for 24h ticker stats
+  const statsWs = new WebSocket("wss://stream.binance.com:9443/ws/shibusdt@ticker");
+
+  statsWs.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    const open = parseFloat(data.o).toFixed(8);
+    const high = parseFloat(data.h).toFixed(8);
+    const low = parseFloat(data.l).toFixed(8);
+    const volume = parseFloat(data.v).toLocaleString('en-US');
+    const quoteVolume = parseFloat(data.q).toLocaleString('en-US');
+    let changeValue = parseFloat(data.P);
+    const formattedChange = (changeValue > 0 ? "+" : "") + changeValue.toFixed(2) + "%";
+
+    statsEl.innerHTML = `
+      <div class="stat-item">Open (24h): $${open}</div>
+      <div class="stat-item">High (24h): $${high}</div>
+      <div class="stat-item">Low (24h): $${low}</div>
+      <div class="stat-item">Volume (SHIB): <span id="volume-num">${volume}</span></div>
+      <div class="stat-item">Quote Volume (USDT): <span id="quoteVolume-num">${quoteVolume}</span></div>
+      <div class="stat-item">Change (24h): <span id="change-num">${formattedChange}</span></div>
+    `;
+
+    // Color flash for volume number only
+    const volEl = document.getElementById("volume-num");
+    if(lastVolume !== null) {
+      if(parseFloat(data.v) > parseFloat(lastVolume)) volEl.style.color = "lime";
+      else if(parseFloat(data.v) < parseFloat(lastVolume)) volEl.style.color = "red";
+      setTimeout(() => volEl.style.color = "white", 800);
+    }
+    lastVolume = data.v;
+
+    // Color flash for quote volume number only
+    const qVolEl = document.getElementById("quoteVolume-num");
+    if(lastQuoteVolume !== null) {
+      if(parseFloat(data.q) > parseFloat(lastQuoteVolume)) qVolEl.style.color = "lime";
+      else if(parseFloat(data.q) < parseFloat(lastQuoteVolume)) qVolEl.style.color = "red";
+      setTimeout(() => qVolEl.style.color = "white", 800);
+    }
+    lastQuoteVolume = data.q;
+
+    // Change (24h) color and keep green/red
+    const changeEl = document.getElementById("change-num");
+    changeEl.textContent = formattedChange;
+    if(changeValue > 0) changeEl.style.color = "lime";
+    else if(changeValue < 0) changeEl.style.color = "red";
+    else changeEl.style.color = "white";
+  };
+
+  statsWs.onerror = (err) => console.error("Stats WebSocket error:", err);
+  statsWs.onclose = () => setTimeout(() => location.reload(), 5000);
+  
+    const copyBtn = document.getElementById('copyBtn');
+  const walletText = document.getElementById('wallet').innerText;
+
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(walletText).then(() => {
+      copyBtn.innerText = "Copied!";
+      setTimeout(() => copyBtn.innerText = "Copy", 1500);
+    });
+  });
+  
+  const copyBurnBtn = document.getElementById('copyBurnBtn');
+  const burnWalletText = document.getElementById('burnWallet') ? document.getElementById('burnWallet').innerText : '';
+
+  if (copyBurnBtn && burnWalletText) {
+    copyBurnBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(burnWalletText).then(() => {
+        copyBurnBtn.innerText = "Copied!";
+        setTimeout(() => copyBurnBtn.innerText = "Copy", 1500);
+      });
+    });
+  }
+  
+ 
+</script>
+
+</body>
+</html>
